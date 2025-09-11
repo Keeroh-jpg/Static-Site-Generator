@@ -1,6 +1,7 @@
 import unittest
 
 from htmlnode import HTMLNode
+from htmlnode import LeafNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_init(self):
@@ -28,3 +29,11 @@ class TestHTMLNode(unittest.TestCase):
         self.assertIn("span", repr_str)
         self.assertIn("Text", repr_str)
         self.assertIn("{'style': 'color:red'}", repr_str)
+
+    def test_leaf_to_html_p(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+    
+    def test_leaf_to_html_a(self):
+        node = LeafNode("a", "Click this!", {"href": "https://www.example.com"} )
+        self.assertEqual(node.to_html(), '<a href="https://www.example.com">Click this!</a>')
