@@ -35,5 +35,10 @@ class ParentNode(HTMLNode):
             raise ValueError("ParentNode must have a tag")
         if self.children is None:
             raise ValueError("ParentNode must have children")
+        str = f"<{self.tag}{self.props_to_html()}>"
+        for child in self.children:
+            str += child.to_html()
+        str += f"</{self.tag}>"
+        return str
         
     
