@@ -43,25 +43,3 @@ class ParentNode(HTMLNode):
             str += child.to_html()
         str += f"</{self.tag}>"
         return str
-    
-def text_node_to_html_node(text_node):
-    if text_node.text_type == None:
-        raise Exception("Text_node needs to have a text_type.")
-    if text_node.text_type.plain:
-        plain_node = LeafNode(None, text_node.text)
-        return plain_node
-    if text_node.text_type.bold:
-        bold_node = LeafNode("b", text_node.text)
-        return bold_node
-    if text_node.text_type.italic:
-        italic_node = LeafNode("i", text_node.text)
-        return italic_node
-    if text_node.text_type.code:
-        code_node = LeafNode("code", text_node.text)
-        return code_node
-    if text_node.text_type.link:
-        link_node = LeafNode("a", text_node.text, "href")
-        return link_node
-    if text_node.text_type.image:
-        image_node = LeafNode("img", "", {"src": text_node.src, "alt": text_node.alt})
-        return image_node
