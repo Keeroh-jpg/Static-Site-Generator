@@ -2,6 +2,7 @@ import unittest
 
 from htmlnode import HTMLNode, ParentNode
 from htmlnode import LeafNode
+from htmlnode import *
 
 class TestHTMLNode(unittest.TestCase):
     def test_init(self):
@@ -63,3 +64,10 @@ class TestHTMLNode(unittest.TestCase):
         parent_node = ParentNode(None, [child_node])
         with self.assertRaises(ValueError):
             parent_node.to_html()
+
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.plain)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+        
