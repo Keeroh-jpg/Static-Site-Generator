@@ -1,6 +1,4 @@
 import unittest
-from htmlnode import *
-
 from textnode import TextNode, TextType
 
 
@@ -19,3 +17,7 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("This is a link", TextType.link, "https://www.boot.dev")
         node2 = TextNode("This is a link", TextType.link, "www.google.com")
         self.assertNotEqual(node, node2)
+    
+    def test_split_nodes_delimiter(self):
+        node = TextNode("This is text with a **bold word**", TextType.plain)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.bold)

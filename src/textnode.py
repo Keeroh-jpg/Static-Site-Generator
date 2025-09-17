@@ -1,5 +1,5 @@
 from enum import Enum
-from htmlnode import *
+from htmlnode import LeafNode
 
 class TextType(Enum):
     plain = "plain_text"
@@ -26,21 +26,43 @@ class TextNode:
 def text_node_to_html_node(text_node):
     if text_node.text_type == None:
         raise Exception("Text_node needs to have a text_type.")
-    if text_node.text_type.plain:
+    if text_node.text_type == TextType.plain:
         plain_node = LeafNode(None, text_node.text)
         return plain_node
-    if text_node.text_type.bold:
+    if text_node.text_type == TextType.bold:
         bold_node = LeafNode("b", text_node.text)
         return bold_node
-    if text_node.text_type.italic:
+    if text_node.text_type == TextType.italic:
         italic_node = LeafNode("i", text_node.text)
         return italic_node
-    if text_node.text_type.code:
+    if text_node.text_type == TextType.code:
         code_node = LeafNode("code", text_node.text)
         return code_node
-    if text_node.text_type.link:
+    if text_node.text_type == TextType.link:
         link_node = LeafNode("a", text_node.text, "href")
         return link_node
-    if text_node.text_type.image:
+    if text_node.text_type == TextType.image:
         image_node = LeafNode("img", "", {"src": text_node.src, "alt": text_node.alt})
         return image_node
+
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_list = []
+    for node in old_nodes:
+        if node.text_type == TextType.plain:
+            temp_list = []
+            split_node = node.text.split(delimiter)
+            if len(split_node) % 2 == 0:
+                raise Exception("That's invalid markdown syntax!")
+            for i, part in enumerate(split_node):
+                if part == "":
+                    continue
+                if i % 2 == 0:
+                    temp_list.append(TextNode(part, TextType.plain))
+                else:
+                    temp_list.append(TextNode(part, text_type))
+            new_list.extend(temp_list)
+        else:
+            new_list.append(node)
+    return new_list          
+
+            
