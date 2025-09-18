@@ -1,4 +1,4 @@
-from textnode import *
+
 
 
 class HTMLNode:
