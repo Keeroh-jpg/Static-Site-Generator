@@ -27,6 +27,12 @@ class TestInlineMarkdown(unittest.TestCase):
         new_nodes = split_nodes_delimiter(new_nodes, "__", TextType.italic)
         self.assertListEqual([TextNode("This is a text with an ", TextType.plain),TextNode("italic", TextType.italic),TextNode(" word and a ", TextType.plain),TextNode("bold", TextType.bold),TextNode(" word", TextType.plain),],new_nodes)
 
+    def test_split_delimiter_italic(self):
+        node = TextNode("This is a text with an __italic__ word", TextType.plain)
+        new_nodes = split_nodes_delimiter([node], "__", TextType.italic)
+        self.assertListEqual([TextNode("This is a text with an ", TextType.plain),TextNode("italic",TextType.italic),TextNode(" word", TextType.plain),],new_nodes)
+        
+
 
 
 if __name__ == "__main__":
