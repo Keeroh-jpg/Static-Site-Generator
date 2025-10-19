@@ -37,7 +37,11 @@ def split_nodes_image(old_nodes):
         image_alt = info(0)
         image_link = info(1)
         sections = node.text.split(f"![{image_alt}]({image_link})", 1)
-        
+        for i, part in enumerate(sections):
+            if part == "":
+                continue
+            if i % 2 == 0:
+                new_nodes.append(part)
 
 
 def split_nodes_link(old_nodes):
