@@ -3,6 +3,7 @@ import unittest
 from inline_markdown import (split_nodes_delimiter,)
 from inline_markdown import (extract_markdown_images)
 from inline_markdown import (extract_markdown_links)
+from inline_markdown import *
 
 from textnode import TextNode, TextType
 
@@ -63,6 +64,19 @@ class TestInlineMarkdown(unittest.TestCase):
             "So this is my link that sends you [to oldschool runescape](https://oldschool.runescape.com/) (what do?)"
         )
         self.assertListEqual([("to oldschool runescape", "https://oldschool.runescape.com/")], matches)
+
+
+    def test_split_images(self):
+        node = TextNode("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)", TextType.plain)
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.plain),
+                TextNode("image", TextType.image, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.plain),
+                TextNode("second image", TextType.image, "https://i.imgur.com/3elNhQu.png"),
+            ],
+            new_nodes,)
 
 
 if __name__ == "__main__":
