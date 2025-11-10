@@ -77,7 +77,18 @@ class TestInlineMarkdown(unittest.TestCase):
                 TextNode("second image", TextType.image, "https://i.imgur.com/3elNhQu.png"),
             ],
             new_nodes,)
-
+        
+    def test_split_links(self):
+        node = TextNode("This is text with a link [to youtube](https://www.youtube.com) and another link [to my warcraft logs](https://www.warcraftlogs.com/character/eu/silvermoon/keeroh)", TextType.plain)
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a link ", TextType.plain),
+                TextNode("to youtube", TextType.link, "https://www.youtube.com"),
+                TextNode(" and another link ", TextType.plain),
+                TextNode("to my warcraft logs", TextType.link, "https://www.warcraftlogs.com/character/eu/silvermoon/keeroh"),
+            ],
+            new_nodes,)
 
 if __name__ == "__main__":
     unittest.main()

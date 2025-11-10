@@ -71,7 +71,7 @@ def split_nodes_link(old_nodes):
 
         while len(parts) > 0:
             label, url = parts[0]
-            snippet = f"![{label}]{url}"
+            snippet = f"[{label}]({url})"
             before, after = text.split(snippet, 1)
             if before != "":
                 new_nodes.append(TextNode(before, TextType.plain))
