@@ -90,5 +90,26 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,)
 
+    def test_text_to_textnodes(self):
+        text = "This is **text** with an __italic__ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        expected = [
+                    TextNode("This is ", TextType.plain),
+                    TextNode("text", TextType.bold),
+                    TextNode(" with an ", TextType.plain),
+                    TextNode("italic", TextType.italic),
+                    TextNode(" word and a ", TextType.plain),
+                    TextNode("code block", TextType.code),
+                    TextNode(" and an ", TextType.plain),
+                    TextNode("obi wan image", TextType.image, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                    TextNode(" and a ", TextType.plain),
+                    TextNode("link", TextType.link, "https://boot.dev"),
+        ]
+        self.assertEqual(nodes, expected)
+
+
+
+
+
 if __name__ == "__main__":
     unittest.main()

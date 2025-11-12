@@ -2,25 +2,24 @@ from textnode import TextNode, TextType
 import re
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
-    new_list = []
-    for node in old_nodes:
-        if node.text_type == TextType.plain:
-            temp_list = []
-            split_node = node.text.split(delimiter)
-            if len(split_node) % 2 == 0:
-                raise Exception("That's invalid markdown syntax!")
-            for i, part in enumerate(split_node):
-                if part == "":
-                    continue
-                if i % 2 == 0:
-                    temp_list.append(TextNode(part, TextType.plain))
-                else:
-                    temp_list.append(TextNode(part, text_type))
-            new_list.extend(temp_list)
-        else:
-            new_list.append(node)
+    new_nodes = []
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.plain:
+            new_nodes.append(old_node)
             continue
-    return new_list   
+        split_nodes = []
+        sections = old_node.text.split(delimiter)
+        if len(sections) % 2 == 0:
+            raise ValueError("invalid markdown, formatted section not closed")
+        for i in range(len(sections)):
+            if sections[i] == "":
+                continue
+            if i % 2 == 0:
+                split_nodes.append(TextNode(sections[i], TextType.plain))
+            else:
+                split_nodes.append(TextNode(sections[i], text_type))
+        new_nodes.extend(split_nodes)
+    return new_nodes 
 
 def extract_markdown_images(text):
     image_matches = re.findall(r"!\[(.*?)\]\((.*?)\)", text)
@@ -81,4 +80,13 @@ def split_nodes_link(old_nodes):
         if text != "":
             new_nodes.append(TextNode(text, TextType.plain))
     return new_nodes
+
+def text_to_textnodes(text):
+    nodes = [TextNode(text, TextType.plain)]
+    nodes = split_nodes_delimiter(nodes, "**", TextType.bold)
+    nodes = split_nodes_delimiter(nodes, "__", TextType.italic)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.code)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
 
