@@ -1,4 +1,4 @@
-from textnode import TextNode, TextType
+from enum import Enum
 
 def markdown_to_blocks(markdown):
     final_blocks = []
@@ -9,4 +9,14 @@ def markdown_to_blocks(markdown):
         else:
             final_blocks.append(block.strip())
     return final_blocks
+
+
+class BlockType(Enum):
+    paragraph = "paragraph"
+    heading = "heading"
+    code = "code"
+    quote = "quote"
+    unordered_list = "unordered_list"
+    ordered_list = "ordered_list"
+    
     
