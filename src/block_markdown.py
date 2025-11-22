@@ -19,4 +19,6 @@ class BlockType(Enum):
     unordered_list = "unordered_list"
     ordered_list = "ordered_list"
     
+def block_to_block_type(block):
+    pass
     
