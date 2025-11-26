@@ -20,13 +20,22 @@ class BlockType(Enum):
     ordered_list = "ordered_list"
     
 def block_to_block_type(block):
-    count = 0
+    hash_count = 0
     for char in block:
         if char == "#":
-            count += 1
+            hash_count += 1
         else:
             break
-    if 1 <= count <= 6 and len(block) > count and block[count] == " ":
+    if 1 <= hash_count <= 6 and len(block) > hash_count and block[hash_count] == " ":
         return BlockType.heading
+    
+    lines = block.split("\n")
+    is_ordered = True
+    for i, line in enumerate(lines, start=1):
+        if not line.startswith(f"{str(i)}. "):
+            is_ordered = False
+            break
+    if is_ordered:
+        return BlockType.ordered_list
     
     
