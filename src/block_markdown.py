@@ -20,20 +20,13 @@ class BlockType(Enum):
     ordered_list = "ordered_list"
     
 def block_to_block_type(block):
-    # if it's code:
-        # ...
-    # elif it's quote:
-        # ...
-    # elif it's unordered list:
-        # ...
-    # elif it's ordered list:
-        # ...
-    if "#" in block[:6]:
-        pass
-
-
-        # ...
-    # else:
-        # paragraph
+    count = 0
+    for char in block:
+        if char == "#":
+            count += 1
+        else:
+            break
+    if 1 <= count <= 6 and len(block) > count and block[count] == " ":
+        return BlockType.heading
     
     
