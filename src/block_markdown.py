@@ -20,6 +20,34 @@ class BlockType(Enum):
     ordered_list = "ordered_list"
     
 def block_to_block_type(block):
+    if block.startswith("```") and block.endswith("```"):
+        return BlockType.code
+    
+    lines = block.split("\n")
+    is_quote = True
+    for line in lines:
+        if not line.startswith(">"):
+            is_quote = False
+            break
+    if is_quote:
+        return BlockType.quote
+    
+    is_unordered = True
+    for line in lines:
+        if not line.startswith("- "):
+            is_unordered = False
+            break
+    if is_unordered:
+        return BlockType.unordered_list
+    
+    is_ordered = True
+    for i, line in enumerate(lines, start=1):
+        if not line.startswith(f"{str(i)}. "):
+            is_ordered = False
+            break
+    if is_ordered:
+        return BlockType.ordered_list
+
     hash_count = 0
     for char in block:
         if char == "#":
@@ -29,13 +57,14 @@ def block_to_block_type(block):
     if 1 <= hash_count <= 6 and len(block) > hash_count and block[hash_count] == " ":
         return BlockType.heading
     
-    lines = block.split("\n")
-    is_ordered = True
-    for i, line in enumerate(lines, start=1):
-        if not line.startswith(f"{str(i)}. "):
-            is_ordered = False
-            break
-    if is_ordered:
-        return BlockType.ordered_list
+    else:
+        return BlockType.paragraph
+
+    
+
+    
+
+        
+    
     
     
