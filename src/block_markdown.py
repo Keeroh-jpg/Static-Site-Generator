@@ -1,4 +1,5 @@
 from enum import Enum
+from htmlnode import *
 
 def markdown_to_blocks(markdown):
     final_blocks = []
@@ -22,7 +23,6 @@ class BlockType(Enum):
 def block_to_block_type(block):
     if block.startswith("```") and block.endswith("```"):
         return BlockType.code
-    
     lines = block.split("\n")
     is_quote = True
     for line in lines:
@@ -31,7 +31,6 @@ def block_to_block_type(block):
             break
     if is_quote:
         return BlockType.quote
-    
     is_unordered = True
     for line in lines:
         if not line.startswith("- "):
@@ -39,7 +38,6 @@ def block_to_block_type(block):
             break
     if is_unordered:
         return BlockType.unordered_list
-    
     is_ordered = True
     for i, line in enumerate(lines, start=1):
         if not line.startswith(f"{str(i)}. "):
@@ -47,7 +45,6 @@ def block_to_block_type(block):
             break
     if is_ordered:
         return BlockType.ordered_list
-
     hash_count = 0
     for char in block:
         if char == "#":
@@ -56,9 +53,16 @@ def block_to_block_type(block):
             break
     if 1 <= hash_count <= 6 and len(block) > hash_count and block[hash_count] == " ":
         return BlockType.heading
-    
     else:
         return BlockType.paragraph
+    
+def markdown_to_html_node(markdown):
+    markdown_blocks = markdown_to_blocks(markdown)
+    for block in markdown_blocks:
+        block_type = block_to_block_type(block)
+        if block_type == BlockType.quote:
+            node = HTMLNode("<blockquote>", block)
+
 
     
 
