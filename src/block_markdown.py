@@ -57,11 +57,24 @@ def block_to_block_type(block):
         return BlockType.paragraph
     
 def markdown_to_html_node(markdown):
+    block_nodes = []
     markdown_blocks = markdown_to_blocks(markdown)
     for block in markdown_blocks:
         block_type = block_to_block_type(block)
         if block_type == BlockType.quote:
-            node = HTMLNode("<blockquote>", block)
+            block_nodes.append(HTMLNode("blockquote", block))
+        elif block_type == BlockType.unordered_list:
+            block_nodes.append(HTMLNode("ul", block))
+        elif block_type == BlockType.heading:
+            block_nodes.append(HTMLNode("h1"))
+        elif block_type == BlockType.code:
+            block_nodes.append(HTMLNode("code"))
+        elif block_type == BlockType.ordered_list:
+            block_nodes.append(HTMLNode("ol"))
+        else:
+            block_nodes.append(HTMLNode("p", block))
+    final_node = HTMLNode("div", None, block_nodes)
+    return final_node
 
 
     
