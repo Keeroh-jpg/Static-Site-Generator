@@ -1,5 +1,8 @@
 from enum import Enum
 from htmlnode import *
+from inline_markdown import *
+from textnode import *
+
 
 def markdown_to_blocks(markdown):
     final_blocks = []
@@ -62,7 +65,18 @@ def markdown_to_html_node(markdown):
     for block in markdown_blocks:
         block_type = block_to_block_type(block)
         if block_type == BlockType.quote:
-            block_nodes.append(HTMLNode("blockquote", block))
+            lines = block.split("\n")
+            cleaned_lines = []
+            for line in lines:
+                line = line.lstrip()
+                if line.startswith(">"):
+                    line = line[1:]
+                    if line.startswith(" "):
+                        line = line[1:]
+                cleaned_lines.append(line)
+            text = "\n".join(cleaned_lines)
+            children_from_inline = text_to_children(text)
+            block_nodes.append(HTMLNode("blockquote", None, children_from_inline))
         elif block_type == BlockType.unordered_list:
             block_nodes.append(HTMLNode("ul", block))
         elif block_type == BlockType.heading:
@@ -72,9 +86,19 @@ def markdown_to_html_node(markdown):
         elif block_type == BlockType.ordered_list:
             block_nodes.append(HTMLNode("ol"))
         else:
-            block_nodes.append(HTMLNode("p", block))
+            children_from_inline = text_to_children(block)
+            block_nodes.append(HTMLNode("p", None, children_from_inline))
     final_node = HTMLNode("div", None, block_nodes)
     return final_node
+
+def text_to_children(text):
+    nodes = text_to_textnodes(text)
+    html_nodes = []
+    for node in nodes:
+        html_nodes.append(text_node_to_html_node(node))
+    return html_nodes
+        
+
 
 
     
