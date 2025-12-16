@@ -78,13 +78,53 @@ def markdown_to_html_node(markdown):
             children_from_inline = text_to_children(text)
             block_nodes.append(HTMLNode("blockquote", None, children_from_inline))
         elif block_type == BlockType.unordered_list:
-            block_nodes.append(HTMLNode("ul", block))
+            lines = block.split("\n")
+            li_nodes = []
+            for line in lines:
+                line = line.lstrip()
+                if line.startswith("-"):
+                    line = line[1:]
+                    if line.startswith(" "):
+                        line = line[1:]
+                children = text_to_children(line)
+                li_nodes.append(HTMLNode("li", None, children))
+            block_nodes.append(HTMLNode("ul", None, li_nodes))
         elif block_type == BlockType.heading:
-            block_nodes.append(HTMLNode("h1"))
+            hash_count = 0
+            line = block.lstrip()
+            while hash_count < len(line) and hash_count < 6 and line[hash_count] == "#":
+                hash_count += 1
+            text = line[hash_count:].lstrip()
+            children = text_to_children(text)
+            tag = f"h{hash_count}"
+            block_nodes.append(HTMLNode(tag, None, children))
         elif block_type == BlockType.code:
-            block_nodes.append(HTMLNode("code"))
+            lines = block.split("\n")
+            code_text = ""
+            for line in lines:
+                if line.startswith("```"):
+                    continue
+                code_text += line +"\n"
+            text_node = TextNode(code_text, TextType.code)
+            code_child = text_node_to_html_node(text_node)
+            pre_node = HTMLNode("pre", None, [code_child])
+            block_nodes.append(pre_node)
         elif block_type == BlockType.ordered_list:
-            block_nodes.append(HTMLNode("ol"))
+            lines = block.split("\n")
+            li_nodes = []
+            num = 0
+            for line in lines:
+                num += 1
+                line = line.lstrip()
+                prefix = f"{num}."
+                if not line.startswith(prefix):
+                    continue
+                line = line[len(prefix):]
+                if line.startswith(" "):
+                    line = line[1:]
+                children = text_to_children(line)
+                li_nodes.append(HTMLNode("li", None, children))
+            block_nodes.append(HTMLNode("ol", None, li_nodes))            
         else:
             children_from_inline = text_to_children(block)
             block_nodes.append(HTMLNode("p", None, children_from_inline))
