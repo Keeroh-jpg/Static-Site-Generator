@@ -76,7 +76,7 @@ def markdown_to_html_node(markdown):
                 cleaned_lines.append(line)
             text = "\n".join(cleaned_lines)
             children_from_inline = text_to_children(text)
-            block_nodes.append(HTMLNode("blockquote", None, children_from_inline))
+            block_nodes.append(ParentNode("blockquote", children_from_inline))
         elif block_type == BlockType.unordered_list:
             lines = block.split("\n")
             li_nodes = []
@@ -87,8 +87,8 @@ def markdown_to_html_node(markdown):
                     if line.startswith(" "):
                         line = line[1:]
                 children = text_to_children(line)
-                li_nodes.append(HTMLNode("li", None, children))
-            block_nodes.append(HTMLNode("ul", None, li_nodes))
+                li_nodes.append(ParentNode("li", children))
+            block_nodes.append(ParentNode("ul", li_nodes))
         elif block_type == BlockType.heading:
             hash_count = 0
             line = block.lstrip()
@@ -97,7 +97,7 @@ def markdown_to_html_node(markdown):
             text = line[hash_count:].lstrip()
             children = text_to_children(text)
             tag = f"h{hash_count}"
-            block_nodes.append(HTMLNode(tag, None, children))
+            block_nodes.append(ParentNode(tag, children))
         elif block_type == BlockType.code:
             lines = block.split("\n")
             code_text = ""
@@ -107,7 +107,7 @@ def markdown_to_html_node(markdown):
                 code_text += line +"\n"
             text_node = TextNode(code_text, TextType.code)
             code_child = text_node_to_html_node(text_node)
-            pre_node = HTMLNode("pre", None, [code_child])
+            pre_node = ParentNode("pre", [code_child])
             block_nodes.append(pre_node)
         elif block_type == BlockType.ordered_list:
             lines = block.split("\n")
@@ -123,12 +123,15 @@ def markdown_to_html_node(markdown):
                 if line.startswith(" "):
                     line = line[1:]
                 children = text_to_children(line)
-                li_nodes.append(HTMLNode("li", None, children))
-            block_nodes.append(HTMLNode("ol", None, li_nodes))            
+                li_nodes.append(ParentNode("li", children))
+            block_nodes.append(ParentNode("ol", li_nodes))            
         else:
-            children_from_inline = text_to_children(block)
-            block_nodes.append(HTMLNode("p", None, children_from_inline))
-    final_node = HTMLNode("div", None, block_nodes)
+            lines = block.split("\n")
+            lines = [line.strip() for line in lines if line.strip() != ""]
+            text = " ".join(lines)
+            children = text_to_children(text)
+            block_nodes.append(ParentNode("p", children))
+    final_node = ParentNode("div", block_nodes)
     return final_node
 
 def text_to_children(text):

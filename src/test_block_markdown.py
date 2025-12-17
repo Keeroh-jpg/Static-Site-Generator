@@ -1,5 +1,6 @@
 import unittest
 from block_markdown import *
+from htmlnode import *
 
 
 class TestBlockMarkdown(unittest.TestCase):
@@ -7,7 +8,7 @@ class TestBlockMarkdown(unittest.TestCase):
         md = """
 This is **bolded** paragraph
 
-This is another paragraph with _italic_ text and `code` here
+This is another paragraph with __italic__ text and `code` here
 This is the same paragraph on a new line
 
 - This is a list
@@ -18,7 +19,7 @@ This is the same paragraph on a new line
             blocks,
             [
                 "This is **bolded** paragraph",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "This is another paragraph with __italic__ text and `code` here\nThis is the same paragraph on a new line",
                 "- This is a list\n- with items",
             ],
         )
@@ -52,7 +53,7 @@ This is **bolded** paragraph
 text in a p
 tag here
 
-This is another paragraph with _italic_ text and `code` here
+This is another paragraph with __italic__ text and `code` here
 
 """
 
@@ -78,9 +79,19 @@ the **same** even with inline stuff
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
     )
 
-
-
-
+    def test_unorderedlistblock(self):
+        md = """
+- This is the first item in a list
+- again with the list items
+- lets throw in a bold **item** !!
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>This is the first item in a list</li><li>again with the list items</li><li>lets throw in a bold <b>item</b> !!</li></ul></div>"
+        )
+        
 
 
 if __name__ == "__main__":
